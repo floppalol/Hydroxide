@@ -409,6 +409,7 @@ AddButton(mainPage, "Infinite Yield", function() loadstring(game:HttpGet("https:
 AddButton(mainPage, "Owl Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt"))() end)
 AddButton(playerPage, "Fly (Press E)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Xero2409/Fly-Gui-V2/main/flyv2.lua"))() end)
 AddButton(playerPage, "Speed 100", function() LocalPlayer.Character.Humanoid.WalkSpeed = 100 end)
+AddButton(playerPage, "Speed 50", function() LocalPlayer.Character.Humanoid.WalkSpeed = 50 end)
 AddButton(funPage, "Fling All", function() loadstring(game:HttpGet("https://pastebin.com/raw/5vG6GcfD"))() end)
 
 -- Ensure pages' CanvasSize reflect their content (defensive)
