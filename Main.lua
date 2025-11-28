@@ -368,7 +368,6 @@ end
 local mainPage = CreateTab("Main")
 local playerPage = CreateTab("Player")
 local funPage = CreateTab("Fun")
-local worldPage = CreateTab("World")
 
 Tabs[1].Page.Visible = true
 Tabs[1].Button.BackgroundColor3 = Color3.fromRGB(40,20,90)
@@ -1020,7 +1019,15 @@ task.wait() -- forces UI to fully load before creating button
 
 local unanchorAll = false
 
-local unanchorBtn = AddButton(worldPage, "Unanchor All: OFF", function()
+local unanchorBtn = AddButton(-- =========================
+-- UNANCHOR ALL (GUARANTEED)
+-- =========================
+
+task.wait() -- forces UI to fully load before creating button
+
+local unanchorAll = false
+
+local unanchorBtn = AddButton(PlayerPage, "Unanchor All: OFF", function()
     unanchorAll = not unanchorAll
     unanchorBtn.Text = "Unanchor All: " .. (unanchorAll and "ON" or "OFF")
 end)
@@ -1033,7 +1040,6 @@ RunService.Heartbeat:Connect(function()
             end
         end
     end
-end)
 
 
 -- =========================
