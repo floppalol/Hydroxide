@@ -1010,9 +1010,13 @@ RunService.Heartbeat:Connect(function()
             end
         end
     end
-end)-- =========================
--- UNANCHOR ALL BUTTON
+end)
+
 -- =========================
+-- UNANCHOR ALL (GUARANTEED)
+-- =========================
+
+task.wait() -- forces UI to fully load before creating button
 
 local unanchorAll = false
 
