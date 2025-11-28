@@ -627,6 +627,29 @@ AddButton(playerPage, "Stop Riding", function()
         end
     end
 end)
+
+-- =========================
+-- FAST HEAL
+-- =========================
+
+local fastHeal = false
+
+local healBtn = AddButton(playerPage, "Fast Heal: OFF", function()
+    fastHeal = not fastHeal
+    healBtn.Text = "Fast Heal: " .. (fastHeal and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if fastHeal then
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildWhichIsA("Humanoid")
+            if hum then
+                hum.Health = hum.MaxHealth -- instantly fill health
+            end
+        end
+    end
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
