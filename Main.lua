@@ -929,6 +929,55 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+-- =========================
+-- ORBIT LOOSE OBJECTS
+-- =========================
+
+local orbitObjects = false
+local orbitRadius = 10
+local orbitSpeed = 3
+
+local orbitObjBtn = AddButton(playerPage, "Orbit Objects: OFF", function()
+    orbitObjects = not orbitObjects
+    orbitObjBtn.Text = "Orbit Objects: " .. (orbitObjects and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not orbitObjects then return end
+
+    local char = LocalPlayer.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local center = root.Position
+    local t = tick() * orbitSpeed
+
+    -- find loose objects
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj.Anchored then
+            -- ignore your own character
+            if not obj:IsDescendantOf(char) then
+
+                local dist = (obj.Position - center).Magnitude
+
+                -- only orbit nearby stuff
+                if dist < orbitRadius * 2 then
+                    local angle = (obj:GetDebugId() * 10) + t -- unique offset per object
+
+                    local orbitPos = Vector3.new(
+                        center.X + math.cos(angle) * orbitRadius,
+                        center.Y + 3,
+                        center.Z + math.sin(angle) * orbitRadius
+                    )
+
+                    -- move using CFrame (smooth & strong)
+                    obj.CFrame = CFrame.new(orbitPos)
+                end
+            end
+        end
+    end
+end)
+
 
 -- =========================
 -- FINAL TOUCHES
