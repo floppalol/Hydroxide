@@ -782,6 +782,44 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- =========================
+-- TP TAP (for your own game)
+-- =========================
+
+local tpTap = false
+
+local tpTapBtn = AddButton(playerPage, "TP Tap: OFF", function()
+    tpTap = not tpTap
+    tpTapBtn.Text = "TP Tap: " .. (tpTap and "ON" or "OFF")
+end)
+
+-- Listen for screen taps/clicks
+UserInputService.InputEnded:Connect(function(input)
+    if not tpTap then return end
+    if input.UserInputType ~= Enum.UserInputType.Touch
+    and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+
+    local char = LocalPlayer.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    -- raycast from screen -> world
+    local mousePos = input.Position
+    local camera = workspace.CurrentCamera
+
+    local ray = camera:ScreenPointToRay(mousePos.X, mousePos.Y)
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {char}
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+    local result = workspace:Raycast(ray.Origin, ray.Direction * 5000, raycastParams)
+
+    if result then
+        root.CFrame = CFrame.new(result.Position + Vector3.new(0, 3, 0)) -- teleport slightly above ground
+    end
+end)
+
+
+-- =========================
 -- FINAL TOUCHES
 -- =========================
 
