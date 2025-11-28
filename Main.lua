@@ -818,6 +818,64 @@ UserInputService.InputEnded:Connect(function(input)
     end
 end)
 
+-- =========================
+-- BOX ESP (for your own game)
+-- =========================
+
+local boxESP = false
+
+local boxESPBtn = AddButton(playerPage, "Box ESP: OFF", function()
+    boxESP = not boxESP
+    boxESPBtn.Text = "Box ESP: " .. (boxESP and "ON" or "OFF")
+end)
+
+-- store drawing boxes
+local espBoxes = {}
+
+local function createESP(plr)
+    if plr == LocalPlayer then return end
+    if espBoxes[plr] then return end
+
+    -- new BoxHandleAdornment around character
+    local box = Instance.new("BoxHandleAdornment")
+    box.Size = Vector3.new(4, 6, 4)
+    box.Color3 = Color3.new(1, 1, 1)
+    box.Transparency = 0.5
+    box.ZIndex = 5
+    box.AlwaysOnTop = true
+    box.Visible = false
+    box.Adornee = nil
+    box.Parent = workspace
+
+    espBoxes[plr] = box
+end
+
+local function removeESP(plr)
+    if espBoxes[plr] then
+        espBoxes[plr]:Destroy()
+        espBoxes[plr] = nil
+    end
+end
+
+-- create ESP for all players
+Players.PlayerAdded:Connect(createESP)
+Players.PlayerRemoving:Connect(removeESP)
+
+for _, plr in ipairs(Players:GetPlayers()) do
+    createESP(plr)
+end
+
+RunService.Heartbeat:Connect(function()
+    for plr, box in pairs(espBoxes) do
+        if not plr.Character or not plr.Character:FindFirstChild("HumanoidRootPart") then
+            box.Visible = false
+        else
+            box.Adornee = plr.Character
+            box.Visible = boxESP
+        end
+    end
+end)
+
 
 -- =========================
 -- FINAL TOUCHES
