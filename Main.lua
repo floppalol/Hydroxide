@@ -547,6 +547,58 @@ RunService.Stepped:Connect(function()
     end
 end)
 -- =========================
+-- ORBIT PLAYER
+-- =========================
+
+local orbiting = false
+local orbitDistance = 10     -- how far away from the target you orbit
+local orbitSpeed = 4         -- how fast you spin
+
+local orbitBtn = AddButton(playerPage, "Orbit Player: OFF", function()
+    orbiting = not orbiting
+    orbitBtn.Text = "Orbit Player: " .. (orbiting and "ON" or "OFF")
+end)
+
+local function getClosestPlayer()
+    local closest = nil
+    local shortest = math.huge
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local myRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if myRoot then
+                local dist = (plr.Character.HumanoidRootPart.Position - myRoot.Position).Magnitude
+                if dist < shortest then
+                    shortest = dist
+                    closest = plr
+                end
+            end
+        end
+    end
+
+    return closest
+end
+
+RunService.Heartbeat:Connect(function(dt)
+    if orbiting then
+        local char = LocalPlayer.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+
+        local targetPlayer = getClosestPlayer()
+        if not targetPlayer then return end
+
+        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not targetRoot then return end
+
+        -- compute orbit position
+        local t = tick() * orbitSpeed
+        local offset = Vector3.new(math.cos(t) * orbitDistance, 3, math.sin(t) * orbitDistance)
+
+        root.CFrame = CFrame.new(targetRoot.Position + offset, targetRoot.Position)
+    end
+end)
+-- =========================
 -- TELEPORT TO NEAREST PLAYER
 -- =========================
 
