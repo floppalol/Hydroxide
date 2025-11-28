@@ -1125,7 +1125,7 @@ local lagBtn = AddButton(playerPage, "Lag", function()
     part.CFrame = CFrame.new(0, 0, 0)
 end)
 -- =========================
--- SPAZ OUT OBJECTS
+-- LOCALPLAYER NETWORKED SPAZ OUT OBJECTS
 -- =========================
 
 local spaz = false
@@ -1135,29 +1135,45 @@ local spazBtn = AddButton(playerPage, "Spaz Objects: OFF", function()
     spazBtn.Text = "Spaz Objects: " .. (spaz and "ON" or "OFF")
 end)
 
-spazBtn.LayoutOrder = 999  -- ensures visibility in your scroll UI
+spazBtn.LayoutOrder = 999  -- keep it visible
+
+
+-- Give YOU network ownership of every unanchored part
+local function networkifyToPlayer()
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj.Anchored then
+            pcall(function()
+                obj:SetNetworkOwner(LocalPlayer)  -- << YOU own physics
+            end)
+        end
+    end
+end
+
 
 RunService.Heartbeat:Connect(function()
     if not spaz then return end
 
+    -- make sure YOU own physics
+    networkifyToPlayer()
+
     for _, obj in ipairs(workspace:GetDescendants()) do
         if obj:IsA("BasePart") and not obj.Anchored then
-            
-            -- RANDOM SHAKE MOVEMENT
+
+            -- RANDOM POSITION SHAKE
             obj.CFrame = obj.CFrame * CFrame.new(
                 math.random(-1,1) * 0.4,
                 math.random(-1,1) * 0.4,
                 math.random(-1,1) * 0.4
             )
 
-            -- RANDOM SPIN
+            -- RANDOM ROTATION
             obj.CFrame = obj.CFrame * CFrame.Angles(
                 math.rad(math.random(-6,6)),
                 math.rad(math.random(-6,6)),
                 math.rad(math.random(-6,6))
             )
 
-            -- RANDOM VELOCITY BURSTS
+            -- RANDOM VELOCITY BURST
             obj.AssemblyLinearVelocity = Vector3.new(
                 math.random(-40,40),
                 math.random(-40,40),
