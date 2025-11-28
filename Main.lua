@@ -524,6 +524,53 @@ RunService.RenderStepped:Connect(function()
         end
     end
 end)
+-- =========================
+-- NOCLIP
+-- =========================
+
+local noclipEnabled = false
+local noclipBtn = AddButton(playerPage, "Noclip: OFF", function()
+    noclipEnabled = not noclipEnabled
+    noclipBtn.Text = "Noclip: " .. (noclipEnabled and "ON" or "OFF")
+end)
+
+RunService.Stepped:Connect(function()
+    if noclipEnabled then
+        local char = LocalPlayer.Character
+        if char then
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+-- =========================
+-- TELEPORT TO NEAREST PLAYER
+-- =========================
+
+AddButton(playerPage, "TP to Nearest", function()
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+
+    local closest, closestDist = nil, 999999
+
+    for _, pl in ipairs(Players:GetPlayers()) do
+        if pl ~= LocalPlayer and pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (pl.Character.HumanoidRootPart.Position - hrp.Position).Magnitude
+            if dist < closestDist then
+                closest = pl
+                closestDist = dist
+            end
+        end
+    end
+
+    if closest then
+        hrp.CFrame = closest.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
+    end
+end)
 
 -- =========================
 -- FINAL TOUCHES
