@@ -1125,6 +1125,31 @@ local lagBtn = AddButton(playerPage, "Lag", function()
     part.CFrame = CFrame.new(0, 0, 0)
 end)
 
+-- =========================
+-- FLOAT ALL OBJECTS
+-- =========================
+
+local floatAll = false
+
+local floatBtn = AddButton(playerPage, "Float All: OFF", function()
+    floatAll = not floatAll
+    floatBtn.Text = "Float All: " .. (floatAll and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not floatAll then return end
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and obj.Anchored == false then
+            -- gentle float up
+            obj.CFrame = obj.CFrame * CFrame.new(0, 0.15, 0)
+
+            -- little spin
+            obj.CFrame = obj.CFrame * CFrame.Angles(0, math.rad(1.5), 0)
+        end
+    end
+end)
+
 
 -- =========================
 -- FINAL TOUCHES
