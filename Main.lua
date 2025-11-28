@@ -506,7 +506,7 @@ end)
 -- =========================
 
 local spinning = false
-local spinSpeed = 10 -- bigger number = faster spin
+local spinSpeed = 1000 -- bigger number = faster spin
 
 local spinBtn -- declare first
 
