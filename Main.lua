@@ -1034,6 +1034,68 @@ RunService.Heartbeat:Connect(function(dt)
     end
 end)
 
+-- =========================
+-- PUSH AURA (LOCAL)
+-- =========================
+
+local pushAura = false
+local auraRadius = 10
+local auraForce = 50
+
+local pushAuraBtn = AddButton(playerPage, "Push Aura: OFF", function()
+    pushAura = not pushAura
+    pushAuraBtn.Text = "Push Aura: " .. (pushAura and "ON" or "OFF")
+end)
+
+-- visual aura effect
+local auraParticles = nil
+
+local function enableAuraEffect(hrp)
+    auraParticles = Instance.new("ParticleEmitter")
+    auraParticles.Rate = 15
+    auraParticles.Lifetime = NumberRange.new(0.3, 0.5)
+    auraParticles.Speed = NumberRange.new(0, 0)
+    auraParticles.Size = NumberSequence.new(1.5)
+    auraParticles.Color = ColorSequence.new(Color3.fromRGB(0, 150, 255))
+    auraParticles.LightEmission = 1
+    auraParticles.Parent = hrp
+end
+
+local function disableAuraEffect()
+    if auraParticles then
+        auraParticles:Destroy()
+        auraParticles = nil
+    end
+end
+
+RunService.Heartbeat:Connect(function()
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    -- turn on/off particles
+    if pushAura then
+        if not auraParticles then
+            enableAuraEffect(hrp)
+        end
+    else
+        disableAuraEffect()
+        return
+    end
+
+    -- push loose parts around you (safe)
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if obj:IsA("BasePart") and obj ~= hrp then
+            local dist = (obj.Position - hrp.Position).Magnitude
+            if dist <= auraRadius then
+                local dir = (obj.Position - hrp.Position).Unit
+                obj.Velocity = dir * auraForce
+            end
+        end
+    end
+end)
 
 -- =========================
 -- FINAL TOUCHES
