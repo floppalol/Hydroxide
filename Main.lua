@@ -479,6 +479,28 @@ RunService.RenderStepped:Connect(function()
         end
     end
 end)
+-- =========================
+-- INFINITE JUMP
+-- =========================
+
+local infiniteJumpEnabled = false
+
+local infJumpBtn = AddButton(playerPage, "Infinite Jump: OFF", function()
+    infiniteJumpEnabled = not infiniteJumpEnabled
+    infJumpBtn.Text = "Infinite Jump: " .. (infiniteJumpEnabled and "ON" or "OFF")
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    if infiniteJumpEnabled then
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildWhichIsA("Humanoid")
+            if hum then
+                hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
+end)
 
 -- =========================
 -- FINAL TOUCHES
