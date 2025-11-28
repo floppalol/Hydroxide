@@ -1179,6 +1179,134 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+-- =============================
+-- LOCAL: FLICK SPIN BUTTON (fires server)
+-- Paste into your LocalScript where AddButton & playerPage exist
+-- =============================
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+local remote = ReplicatedStorage:WaitForChild("FlickSpinToggle")
+
+local flickSpin = false
+local localHitbox = nil
+local particle = nil
+local spinSpeed = 65 -- degrees per heartbeat second (local visual)
+
+-- AddButton uses your existing UI system
+local flickBtn = AddButton(playerPage, "Flick Spin: OFF", function()
+    flickSpin = not flickSpin
+    flickBtn.Text = "Flick Spin: " .. (flickSpin and "ON" or "OFF")
+
+    -- tell server to activate/deactivate universal server effect
+    remote:FireServer(flickSpin)
+
+    -- create/destroy local visuals/hitbox
+    if flickSpin then
+        local char = LocalPlayer.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        if hrp and not hrp:FindFirstChild("FlickHitboxLocal") then
+            -- invisible local hitbox (optional, purely local)
+            local hb = Instance.new("Part")
+            hb.Name = "FlickHitboxLocal"
+            hb.Size = Vector3.new(10, 10, 10)
+            hb.Transparency = 1
+            hb.CanCollide = false
+            hb.Anchored = false
+            hb.Massless = true
+            hb.Parent = hrp
+            -- weld (keep relative)
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = hb
+            weld.Part1 = hrp
+            weld.Parent = hb
+            localHitbox = hb
+
+            -- local particle
+            local em = Instance.new("ParticleEmitter")
+            em.Name = "FlickAuraLocal"
+            em.Rate = 50
+            em.Lifetime = NumberRange.new(0.15, 0.25)
+            em.Speed = NumberRange.new(0, 0)
+            em.Size = NumberSequence.new(1.4)
+            em.LightEmission = 0.9
+            em.Color = ColorSequence.new(Color3.fromRGB(0, 170, 255))
+            em.Parent = hrp
+            particle = em
+        end
+    else
+        if localHitbox then
+            localHitbox:Destroy()
+            localHitbox = nil
+        end
+        if particle then
+            particle:Destroy()
+            particle = nil
+        end
+    end
+end)
+
+-- Keep local spin visuals running when enabled
+RunService.Heartbeat:Connect(function(dt)
+    if not flickSpin then return end
+
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    -- local spin visual
+    hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(spinSpeed * dt), 0)
+
+    -- keep hitbox welded (if present) - weld keeps it in place, but ensure parent's CFrame safe
+    if localHitbox and localHitbox.Parent then
+        -- nothing needed because WeldConstraint keeps it attached
+    end
+end)
+
+-- Ensure toggles survive respawn
+LocalPlayer.CharacterAdded:Connect(function(char)
+    -- if flick was on when you respawn, re-create local visuals and re-fire server
+    task.wait(0.5)
+    if flickSpin then
+        -- re-fire server to ensure server knows (in case of network hiccup)
+        remote:FireServer(true)
+        -- recreate local visuals if needed
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if hrp and not hrp:FindFirstChild("FlickHitboxLocal") then
+            -- create same local visuals as above
+            local hb = Instance.new("Part")
+            hb.Name = "FlickHitboxLocal"
+            hb.Size = Vector3.new(10, 10, 10)
+            hb.Transparency = 1
+            hb.CanCollide = false
+            hb.Anchored = false
+            hb.Massless = true
+            hb.Parent = hrp
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = hb
+            weld.Part1 = hrp
+            weld.Parent = hb
+            localHitbox = hb
+
+            local em = Instance.new("ParticleEmitter")
+            em.Name = "FlickAuraLocal"
+            em.Rate = 50
+            em.Lifetime = NumberRange.new(0.15, 0.25)
+            em.Speed = NumberRange.new(0, 0)
+            em.Size = NumberSequence.new(1.4)
+            em.LightEmission = 0.9
+            em.Color = ColorSequence.new(Color3.fromRGB(0, 170, 255))
+            em.Parent = hrp
+            particle = em
+        end
+    end
+end)
+
 -- =========================
 -- FINAL TOUCHES
 -- =========================
