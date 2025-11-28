@@ -979,11 +979,13 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- =========================
--- BRING LOOSE OBJECTS
+-- BRING LOOSE OBJECTS (FIXED)
 -- =========================
 
+task.wait(0.25) -- makes sure GUI + pages exist
+
 local bringObjects = false
-local bringStrength = 0.4    -- how fast objects fly toward you
+local bringStrength = 0.4
 
 local bringBtn = AddButton(playerPage, "Bring Objects: OFF", function()
     bringObjects = not bringObjects
@@ -1001,13 +1003,8 @@ RunService.Heartbeat:Connect(function()
 
     for _, obj in ipairs(workspace:GetDescendants()) do
         if obj:IsA("BasePart") and not obj.Anchored then
-            -- ignore your own character
             if not obj:IsDescendantOf(char) then
-
-                local objPos = obj.Position
-                local direction = (myPos - objPos)
-
-                -- gently pull toward you
+                local direction = (myPos - obj.Position)
                 obj.AssemblyLinearVelocity = direction * bringStrength
             end
         end
