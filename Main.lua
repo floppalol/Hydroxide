@@ -1125,6 +1125,60 @@ local lagBtn = AddButton(playerPage, "Lag", function()
     part.CFrame = CFrame.new(0, 0, 0)
 end)
 
+
+-- =========================
+-- FLICK SPIN (SAFE)
+-- =========================
+
+local RunService = game:GetService("RunService")
+local flickSpin = false
+local hitbox = nil
+
+local flickBtn = AddButton(playerPage, "Flick Spin: OFF", function()
+    flickSpin = not flickSpin
+    flickBtn.Text = "Flick Spin: " .. (flickSpin and "ON" or "OFF")
+
+    if flickSpin then
+        -- create hitbox when enabled
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            hitbox = Instance.new("Part")
+            hitbox.Name = "FlickHitbox"
+            hitbox.Size = Vector3.new(10,10,10)
+            hitbox.Transparency = 1
+            hitbox.CanCollide = false
+            hitbox.Massless = true
+            hitbox.Anchored = false
+            hitbox.Parent = char.HumanoidRootPart
+        end
+    else
+        -- remove hitbox when disabled
+        if hitbox then
+            hitbox:Destroy()
+            hitbox = nil
+        end
+    end
+end)
+
+
+RunService.Heartbeat:Connect(function()
+    if not flickSpin then return end
+
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    -- insane spin (local only)
+    hrp.CFrame *= CFrame.Angles(0, math.rad(65), 0)
+
+    -- keep hitbox locked to you
+    if hitbox then
+        hitbox.CFrame = hrp.CFrame
+    end
+end)
+
 -- =========================
 -- FINAL TOUCHES
 -- =========================
