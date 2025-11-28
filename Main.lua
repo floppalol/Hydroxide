@@ -1096,7 +1096,16 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+-- =============================
+-- SS SPAWN PART BUTTON
+-- =============================
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local spawnEvent = ReplicatedStorage:WaitForChild("SS_SpawnPart")
+
+local spawnBtn = AddButton(worldPage, "Spawn SS Part", function()
+    spawnEvent:FireServer() -- tell server to spawn part
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
