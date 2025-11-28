@@ -506,9 +506,11 @@ end)
 -- =========================
 
 local spinning = false
-local spinSpeed = 10 -- make higher to spin faster
+local spinSpeed = 10 -- bigger number = faster spin
 
-local spinBtn = AddButton(playerPage, "Fast Spin: OFF", function()
+local spinBtn -- declare first
+
+spinBtn = AddButton(playerPage, "Fast Spin: OFF", function()
     spinning = not spinning
     spinBtn.Text = "Fast Spin: " .. (spinning and "ON" or "OFF")
 end)
