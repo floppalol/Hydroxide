@@ -1010,6 +1010,28 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+-- =========================
+-- UNANCHOR ALL (GUARANTEED)
+-- =========================
+
+task.wait() -- forces UI to fully load before creating button
+
+local unanchorAll = false
+
+local unanchorBtn = AddButton(PlayerPage, "Unanchor All: OFF", function()
+    unanchorAll = not unanchorAll
+    unanchorBtn.Text = "Unanchor All: " .. (unanchorAll and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if unanchorAll then
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                obj.Anchored = false
+            end
+        end
+    end
+end)
 
 
 
