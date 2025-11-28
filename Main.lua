@@ -1009,10 +1009,8 @@ RunService.Heartbeat:Connect(function()
             end
         end
     end
-end)
-
--- =========================
--- UNANCHOR ALL (DEV SAFE)
+end)-- =========================
+-- UNANCHOR ALL BUTTON
 -- =========================
 
 local unanchorAll = false
