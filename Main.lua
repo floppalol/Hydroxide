@@ -368,7 +368,7 @@ end
 local mainPage = CreateTab("Main")
 local playerPage = CreateTab("Player")
 local funPage = CreateTab("Fun")
-local worldPage = AddPage("World")
+local worldPage = CreateTab("World")
 
 Tabs[1].Page.Visible = true
 Tabs[1].Button.BackgroundColor3 = Color3.fromRGB(40,20,90)
