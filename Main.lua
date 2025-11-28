@@ -650,6 +650,33 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+
+-- =========================
+-- SWIM EVERYWHERE
+-- =========================
+
+local swimEverywhere = false
+
+local swimBtn = AddButton(playerPage, "Swim Everywhere: OFF", function()
+    swimEverywhere = not swimEverywhere
+    swimBtn.Text = "Swim Everywhere: " .. (swimEverywhere and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if swimEverywhere then
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildWhichIsA("Humanoid")
+            if hum then
+                -- force swim state
+                hum:ChangeState(Enum.HumanoidStateType.Swimming)
+
+                -- optional hover lift so you don't fall
+                hum:Move(Vector3.new(0, 1, 0), true)
+            end
+        end
+    end
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
