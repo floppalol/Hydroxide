@@ -1123,28 +1123,49 @@ local lagBtn = AddButton(playerPage, "Lag", function()
     part.Size = Vector3.new(1000, 1000, 1000)
     part.Anchored = true
     part.CFrame = CFrame.new(0, 0, 0)
-end)-- =========================
--- FLOAT ALL OBJECTS BUTTON
+end)
+-- =========================
+-- SPAZ OUT OBJECTS
 -- =========================
 
-local floatAll = false
+local spaz = false
 
-local floatBtn = AddButton(playerPage, "Float All: OFF", function()
-    floatAll = not floatAll
-    floatBtn.Text = "Float All: " .. (floatAll and "ON" or "OFF")
+local spazBtn = AddButton(playerPage, "Spaz Objects: OFF", function()
+    spaz = not spaz
+    spazBtn.Text = "Spaz Objects: " .. (spaz and "ON" or "OFF")
 end)
 
+spazBtn.LayoutOrder = 999  -- ensures visibility in your scroll UI
+
 RunService.Heartbeat:Connect(function()
-    if not floatAll then return end
+    if not spaz then return end
 
     for _, obj in ipairs(workspace:GetDescendants()) do
         if obj:IsA("BasePart") and not obj.Anchored then
-            obj.CFrame = obj.CFrame * CFrame.new(0, 0.15, 0)
-            obj.CFrame = obj.CFrame * CFrame.Angles(0, math.rad(1.5), 0)
+            
+            -- RANDOM SHAKE MOVEMENT
+            obj.CFrame = obj.CFrame * CFrame.new(
+                math.random(-1,1) * 0.4,
+                math.random(-1,1) * 0.4,
+                math.random(-1,1) * 0.4
+            )
+
+            -- RANDOM SPIN
+            obj.CFrame = obj.CFrame * CFrame.Angles(
+                math.rad(math.random(-6,6)),
+                math.rad(math.random(-6,6)),
+                math.rad(math.random(-6,6))
+            )
+
+            -- RANDOM VELOCITY BURSTS
+            obj.AssemblyLinearVelocity = Vector3.new(
+                math.random(-40,40),
+                math.random(-40,40),
+                math.random(-40,40)
+            )
         end
     end
 end)
-
 -- =========================
 -- FINAL TOUCHES
 -- =========================
