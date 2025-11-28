@@ -501,6 +501,27 @@ UserInputService.JumpRequest:Connect(function()
         end
     end
 end)
+-- =========================
+-- FAST SPIN
+-- =========================
+
+local spinning = false
+local spinSpeed = 10 -- make higher to spin faster
+
+local spinBtn = AddButton(playerPage, "Fast Spin: OFF", function()
+    spinning = not spinning
+    spinBtn.Text = "Fast Spin: " .. (spinning and "ON" or "OFF")
+end)
+
+RunService.RenderStepped:Connect(function()
+    if spinning then
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local hrp = char.HumanoidRootPart
+            hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+        end
+    end
+end)
 
 -- =========================
 -- FINAL TOUCHES
