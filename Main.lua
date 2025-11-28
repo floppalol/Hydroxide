@@ -1011,28 +1011,28 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 -- =========================
--- UNANCHOR ALL (GUARANTEED)
+-- LIGHT SPEED SPIN
 -- =========================
 
-task.wait() -- forces UI to fully load before creating button
+local lightSpin = false
+local spinSpeed = 10000 -- extremely fast spin, change if needed
 
-local unanchorAll = false
-
-local unanchorBtn = AddButton(PlayerPage, "Unanchor All: OFF", function()
-    unanchorAll = not unanchorAll
-    unanchorBtn.Text = "Unanchor All: " .. (unanchorAll and "ON" or "OFF")
+local lightSpinBtn = AddButton(playerPage, "Light Speed Spin: OFF", function()
+    lightSpin = not lightSpin
+    lightSpinBtn.Text = "Light Speed Spin: " .. (lightSpin and "ON" or "OFF")
 end)
 
-RunService.Heartbeat:Connect(function()
-    if unanchorAll then
-        for _, obj in pairs(workspace:GetDescendants()) do
-            if obj:IsA("BasePart") then
-                obj.Anchored = false
+RunService.Heartbeat:Connect(function(dt)
+    if lightSpin then
+        local char = LocalPlayer.Character
+        if char then
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(spinSpeed * dt), 0)
             end
         end
     end
 end)
-
 
 
 -- =========================
