@@ -876,6 +876,59 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+-- =========================
+-- OUTLINE ESP (for your own game)
+-- =========================
+
+local outlineESP = false
+
+local outlineBtn = AddButton(playerPage, "Outline ESP: OFF", function()
+    outlineESP = not outlineESP
+    outlineBtn.Text = "Outline ESP: " .. (outlineESP and "ON" or "OFF")
+end)
+
+local outlineObjects = {}
+
+local function addOutline(plr)
+    if plr == LocalPlayer then return end
+    if outlineObjects[plr] then return end
+
+    local highlight = Instance.new("Highlight")
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.FillTransparency = 1          -- no fill, just outline
+    highlight.OutlineTransparency = 0
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.Enabled = false
+    highlight.Parent = workspace
+
+    outlineObjects[plr] = highlight
+end
+
+local function removeOutline(plr)
+    if outlineObjects[plr] then
+        outlineObjects[plr]:Destroy()
+        outlineObjects[plr] = nil
+    end
+end
+
+Players.PlayerAdded:Connect(addOutline)
+Players.PlayerRemoving:Connect(removeOutline)
+
+for _, plr in ipairs(Players:GetPlayers()) do
+    addOutline(plr)
+end
+
+RunService.Heartbeat:Connect(function()
+    for plr, outline in pairs(outlineObjects) do
+        if plr.Character then
+            outline.Adornee = plr.Character
+            outline.Enabled = outlineESP
+        else
+            outline.Enabled = false
+        end
+    end
+end)
+
 
 -- =========================
 -- FINAL TOUCHES
