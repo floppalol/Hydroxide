@@ -1096,16 +1096,22 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
--- =============================
--- SS SPAWN PART BUTTON
--- =============================
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local spawnEvent = ReplicatedStorage:WaitForChild("SS_SpawnPart")
+-- =========================
+-- CRASH SS
+-- =========================
 
-local spawnBtn = AddButton(PlayerPage, "Spawn SS Part", function()
-    spawnEvent:FireServer() -- tell server to spawn part
+local crashSSBtn = AddButton(playerPage, "Crash SS", function()
+    while true do
+        local part = Instance.new("Part")
+        part.Parent = workspace
+        part.Shape = Enum.PartType.Ball
+        part.Size = Vector3.new(10, 10, 10)
+        part.Anchored = true
+        part.CFrame = CFrame.new(math.random(-100, 100), math.random(-100, 100), math.random(-100, 100))
+    end
 end)
+
 -- =========================
 -- FINAL TOUCHES
 -- =========================
