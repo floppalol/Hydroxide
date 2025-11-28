@@ -978,6 +978,42 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+-- =========================
+-- BRING LOOSE OBJECTS
+-- =========================
+
+local bringObjects = false
+local bringStrength = 0.4    -- how fast objects fly toward you
+
+local bringBtn = AddButton(playerPage, "Bring Objects: OFF", function()
+    bringObjects = not bringObjects
+    bringBtn.Text = "Bring Objects: " .. (bringObjects and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not bringObjects then return end
+
+    local char = LocalPlayer.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local myPos = root.Position
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj.Anchored then
+            -- ignore your own character
+            if not obj:IsDescendantOf(char) then
+
+                local objPos = obj.Position
+                local direction = (myPos - objPos)
+
+                -- gently pull toward you
+                obj.AssemblyLinearVelocity = direction * bringStrength
+            end
+        end
+    end
+end)
+
 
 -- =========================
 -- FINAL TOUCHES
