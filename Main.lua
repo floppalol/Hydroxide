@@ -1125,60 +1125,40 @@ local lagBtn = AddButton(playerPage, "Lag", function()
     part.CFrame = CFrame.new(0, 0, 0)
 end)
 -- =========================
--- SERVER-SIDED SPAZ OUT OBJECTS
+-- SPAZ LOOSE OBJECTS
 -- =========================
 
-local spaz = false
+task.wait(0.25)
+
+local spazObjects = false
+local spazPower = 60 -- how strong the spaz is (increase if needed)
 
 local spazBtn = AddButton(playerPage, "Spaz Objects: OFF", function()
-    spaz = not spaz
-    spazBtn.Text = "Spaz Objects: " .. (spaz and "ON" or "OFF")
+    spazObjects = not spazObjects
+    spazBtn.Text = "Spaz Objects: " .. (spazObjects and "ON" or "OFF")
 end)
 
-spazBtn.LayoutOrder = 999   -- keep button visible
-
-
--- FORCE SERVER OWNERSHIP
-local function networkToServer()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("BasePart") and not obj.Anchored then
-            pcall(function()
-                obj:SetNetworkOwner(nil)  -- << SERVER OWNED
-            end)
-        end
-    end
-end
-
-
 RunService.Heartbeat:Connect(function()
-    if not spaz then return end
-
-    -- make server own all physics
-    networkToServer()
+    if not spazObjects then return end
 
     for _, obj in ipairs(workspace:GetDescendants()) do
         if obj:IsA("BasePart") and not obj.Anchored then
+            -- don't spaz your own character
+            if not obj:IsDescendantOf(LocalPlayer.Character) then
 
-            -- SERVER-SIDED POSITION SHAKE
-            obj.CFrame = obj.CFrame * CFrame.new(
-                math.random(-1,1) * 0.6,
-                math.random(-1,1) * 0.6,
-                math.random(-1,1) * 0.6
-            )
+                -- random physics chaos
+                obj.AssemblyLinearVelocity = Vector3.new(
+                    (math.random(-100, 100) / 100) * spazPower,
+                    (math.random(-100, 100) / 100) * spazPower,
+                    (math.random(-100, 100) / 100) * spazPower
+                )
 
-            -- RANDOM ROTATIONAL SPIN
-            obj.CFrame = obj.CFrame * CFrame.Angles(
-                math.rad(math.random(-10,10)),
-                math.rad(math.random(-10,10)),
-                math.rad(math.random(-10,10))
-            )
-
-            -- RANDOM VELOCITY BURST
-            obj.AssemblyLinearVelocity = Vector3.new(
-                math.random(-60,60),
-                math.random(-60,60),
-                math.random(-60,60)
-            )
+                obj.AssemblyAngularVelocity = Vector3.new(
+                    (math.random(-100, 100) / 100) * spazPower,
+                    (math.random(-100, 100) / 100) * spazPower,
+                    (math.random(-100, 100) / 100) * spazPower
+                )
+            end
         end
     end
 end)
