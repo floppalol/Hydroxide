@@ -1113,6 +1113,19 @@ local crashSSBtn = AddButton(playerPage, "Crash SS", function()
 end)
 
 -- =========================
+-- LAG
+-- =========================
+
+local lagBtn = AddButton(playerPage, "Lag", function()
+    local part = Instance.new("Part")
+    part.Parent = workspace
+    part.Shape = Enum.PartType.Ball
+    part.Size = Vector3.new(1000, 1000, 1000)
+    part.Anchored = true
+    part.CFrame = CFrame.new(0, 0, 0)
+end)
+
+-- =========================
 -- FINAL TOUCHES
 -- =========================
 
