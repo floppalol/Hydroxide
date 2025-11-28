@@ -571,7 +571,62 @@ AddButton(playerPage, "TP to Nearest", function()
         hrp.CFrame = closest.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
     end
 end)
+-- =========================
+-- RIDE NEAREST PLAYER
+-- =========================
 
+AddButton(playerPage, "Ride Nearest", function()
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+
+    local closest, closestDist = nil, 999999
+
+    for _, pl in ipairs(Players:GetPlayers()) do
+        if pl ~= LocalPlayer and pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (pl.Character.HumanoidRootPart.Position - hrp.Position).Magnitude
+            if dist < closestDist then
+                closest = pl
+                closestDist = dist
+            end
+        end
+    end
+
+    if closest then
+        local targetHRP = closest.Character.HumanoidRootPart
+
+        -- detach old welds
+        for _, v in pairs(hrp:GetChildren()) do
+            if v:IsA("Weld") or v:IsA("WeldConstraint") then
+                v:Destroy()
+            end
+        end
+
+        -- create weld
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = hrp
+        weld.Part1 = targetHRP
+        weld.Parent = hrp
+
+        -- place you above them (like riding)
+        hrp.CFrame = targetHRP.CFrame * CFrame.new(0, 2, 0)
+
+        print("Riding:", closest.Name)
+    end
+end)
+
+AddButton(playerPage, "Stop Riding", function()
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+
+    local hrp = char.HumanoidRootPart
+
+    for _, v in ipairs(hrp:GetChildren()) do
+        if v:IsA("Weld") or v:IsA("WeldConstraint") then
+            v:Destroy()
+        end
+    end
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
