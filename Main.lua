@@ -1103,7 +1103,7 @@ end)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local spawnEvent = ReplicatedStorage:WaitForChild("SS_SpawnPart")
 
-local spawnBtn = AddButton(worldPage, "Spawn SS Part", function()
+local spawnBtn = AddButton(PlayerPage, "Spawn SS Part", function()
     spawnEvent:FireServer() -- tell server to spawn part
 end)
 -- =========================
