@@ -430,7 +430,7 @@ end
 -- =========================
 
 local Camera = workspace.CurrentCamera
-local TracersEnabled = true
+local TracersEnabled = false
 local Tracers = {}
 
 local function CreateTracer()
