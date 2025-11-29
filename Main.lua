@@ -1315,6 +1315,65 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 -- =========================
+-- SPIN IN NEAREST PLAYER
+-- =========================
+
+task.wait(0.25)
+
+local spinInNearest = false
+local spinSpeed = 40 -- spin speed
+
+local spinNearestBtn = AddButton(playerPage, "Spin Nearest: OFF", function()
+    spinInNearest = not spinInNearest
+    spinNearestBtn.Text = "Spin Nearest: " .. (spinInNearest and "ON" or "OFF")
+end)
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function getNearestPlayer()
+    local closest
+    local shortestDist = math.huge
+    local myChar = LocalPlayer.Character
+    if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then return nil end
+
+    local myPos = myChar.HumanoidRootPart.Position
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (plr.Character.HumanoidRootPart.Position - myPos).Magnitude
+            if dist < shortestDist then
+                shortestDist = dist
+                closest = plr
+            end
+        end
+    end
+
+    return closest
+end
+
+RunService.Heartbeat:Connect(function(dt)
+    if not spinInNearest then return end
+
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+
+    -- find nearest target
+    local target = getNearestPlayer()
+    if not target then return end
+
+    local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+    if not targetHRP then return end
+
+    -- teleport your HRP inside their body
+    hrp.CFrame = targetHRP.CFrame
+
+    -- spin while inside them
+    hrp.CFrame = hrp.CFrame * CFrame.Angles(0, spinSpeed * dt, 0)
+end)
+
+-- =========================
 -- FINAL TOUCHES
 -- =========================
 
