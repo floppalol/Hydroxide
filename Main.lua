@@ -1238,6 +1238,82 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+
+-- =========================
+-- NAME TAG + PLATFORM
+-- =========================
+
+task.wait(0.25)
+
+local showTags = false
+
+local tagBtn = AddButton(playerPage, "Platform Tags: OFF", function()
+    showTags = not showTags
+    tagBtn.Text = "Platform Tags: " .. (showTags and "ON" or "OFF")
+end)
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function makeTag(plr)
+    if plr.Character and plr.Character:FindFirstChild("Head") then
+
+        -- remove old tag
+        if plr.Character.Head:FindFirstChild("PlatformTag") then
+            plr.Character.Head.PlatformTag:Destroy()
+        end
+
+        local tag = Instance.new("BillboardGui")
+        tag.Name = "PlatformTag"
+        tag.Adornee = plr.Character.Head
+        tag.Size = UDim2.new(4, 0, 1, 0)
+        tag.StudsOffset = Vector3.new(0, 2.5, 0)
+        tag.AlwaysOnTop = true
+        tag.Parent = plr.Character.Head
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.BackgroundTransparency = 1
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.TextScaled = true
+        label.Font = Enum.Font.GothamBold
+        label.Parent = tag
+
+        -- platform detector
+        local platform = plr.OsPlatform or "Unknown"
+
+        label.Text = plr.DisplayName .. "\n[" .. platform .. "]"
+    end
+end
+
+-- update on respawn
+Players.PlayerAdded:Connect(function(plr)
+    plr.CharacterAdded:Connect(function()
+        task.wait(0.5)
+        if showTags then makeTag(plr) end
+    end)
+end)
+
+-- update existing
+for _, plr in ipairs(Players:GetPlayers()) do
+    if plr ~= LocalPlayer then
+        plr.CharacterAdded:Connect(function()
+            task.wait(0.5)
+            if showTags then makeTag(plr) end
+        end)
+    end
+end
+
+-- heartbeat refresh while ON
+RunService.Heartbeat:Connect(function()
+    if not showTags then return end
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            makeTag(plr)
+        end
+    end
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
