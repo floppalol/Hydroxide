@@ -1374,6 +1374,61 @@ RunService.Heartbeat:Connect(function(dt)
 end)
 
 -- =========================
+-- BODY SPAZ + BIG HITBOX
+-- =========================
+
+task.wait(0.25)
+
+local bodySpaz = false
+local spazPower = 40 -- how strong the shaking is
+local hitboxSize = Vector3.new(10, 10, 10) -- size of big hitbox
+
+local spazBtn = AddButton(playerPage, "Body Spaz: OFF", function()
+    bodySpaz = not bodySpaz
+    spazBtn.Text = "Body Spaz: " .. (bodySpaz and "ON" or "OFF")
+end)
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+RunService.Heartbeat:Connect(function()
+    if not bodySpaz then return end
+
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    -- =========================
+    -- BIGGER HITBOX
+    -- =========================
+    hrp.Size = hitboxSize
+    hrp.Massless = true
+    hrp.CanCollide = true
+
+    -- make sure hitbox stays enabled
+    if hrp:FindFirstChildOfClass("SpecialMesh") then
+        hrp:FindFirstChildOfClass("SpecialMesh"):Destroy()
+    end
+
+    -- =========================
+    -- BODY SPAZ (violent shaking)
+    -- =========================
+    hrp.AssemblyLinearVelocity = Vector3.new(
+        math.random(-spazPower, spazPower),
+        math.random(-spazPower, spazPower),
+        math.random(-spazPower, spazPower)
+    )
+
+    hrp.AssemblyAngularVelocity = Vector3.new(
+        math.random(-spazPower, spazPower),
+        math.random(-spazPower, spazPower),
+        math.random(-spazPower, spazPower)
+    )
+end)
+
+-- =========================
 -- FINAL TOUCHES
 -- =========================
 
