@@ -1555,6 +1555,60 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+
+-- =========================
+-- OUR CUSTOM SERVER KILLER 2025
+-- Lag + Fling + Crash (you immune)
+-- =========================
+
+local nukeActive = false
+local nukeBtn = AddButton(playerPage, "Our Nuke: OFF", function()
+    nukeActive = not nukeActive
+    nukeBtn.Text = "Our Nuke: " .. (nukeActive and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not nukeActive then return end
+
+    spawn(function()
+        while nukeActive and task.wait() do
+            for i = 1, 30 do  -- spam 30 parts per frame = instant death
+                spawn(function()
+                    local p = Instance.new("Part")
+                    p.Size = Vector3.new(50, 50, 50)
+                    p.Transparency = 1
+                    p.Anchored = false
+                    p.CanCollide = false
+                    p.CFrame = CFrame.new(0, 99999, 0) -- spawn in sky
+                    p.Parent = workspace
+
+                    -- Take ownership then release to server
+                    pcall(function() p:SetNetworkOwner(nil) end)
+
+                    -- INSANE velocity + spin
+                    p.AssemblyLinearVelocity = Vector3.new(
+                        math.random(-99999, 99999),
+                        math.random(50000, 150000),
+                        math.random(-99999, 99999)
+                    )
+                    p.AssemblyAngularVelocity = Vector3.new(
+                        math.random(-1000, 1000),
+                        math.random(-1000, 1000),
+                        math.random(-1000, 1000)
+                    )
+
+                    -- Break everything it touches
+                    p.Touched:Connect(function(hit)
+                        if hit and hit.Parent then
+                            pcall(function() hit:BreakJoints() end)
+                            pcall(function() hit.Anchored = false end)
+                        end
+                    end)
+                end)
+            end
+        end
+    end)
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
