@@ -1429,6 +1429,86 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- =========================
+-- AUDIO PLAYER
+-- =========================
+
+task.wait(0.25)
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create audio object
+local sound = Instance.new("Sound")
+sound.Name = "MenuMusicPlayer"
+sound.Volume = 1
+sound.Looped = true
+sound.Parent = workspace
+
+local audioUI -- will be created when button pressed
+
+local function createAudioUI()
+    if audioUI then return end
+
+    audioUI = Instance.new("ScreenGui")
+    audioUI.Name = "AudioMenu"
+    audioUI.ResetOnSpawn = false
+    audioUI.Parent = PlayerGui
+
+    local frame = Instance.new("Frame")
+    frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+    frame.Size = UDim2.new(0, 260, 0, 160)
+    frame.Position = UDim2.new(0.5, -130, 0.5, -80)
+    frame.Parent = audioUI
+
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 30)
+    title.BackgroundColor3 = Color3.fromRGB(45,45,45)
+    title.Text = "Audio Player"
+    title.TextColor3 = Color3.new(1,1,1)
+    title.Parent = frame
+
+    local input = Instance.new("TextBox")
+    input.PlaceholderText = "Enter Music ID"
+    input.Size = UDim2.new(1, -20, 0, 30)
+    input.Position = UDim2.new(0, 10, 0, 40)
+    input.BackgroundColor3 = Color3.fromRGB(50,50,50)
+    input.TextColor3 = Color3.new(1,1,1)
+    input.Parent = frame
+
+    local playBtn = Instance.new("TextButton")
+    playBtn.Text = "Play"
+    playBtn.Size = UDim2.new(0.5, -15, 0, 30)
+    playBtn.Position = UDim2.new(0, 10, 0, 80)
+    playBtn.BackgroundColor3 = Color3.fromRGB(0,120,0)
+    playBtn.TextColor3 = Color3.new(1,1,1)
+    playBtn.Parent = frame
+
+    local stopBtn = Instance.new("TextButton")
+    stopBtn.Text = "Stop"
+    stopBtn.Size = UDim2.new(0.5, -15, 0, 30)
+    stopBtn.Position = UDim2.new(0.5, 5, 0, 80)
+    stopBtn.BackgroundColor3 = Color3.fromRGB(120,0,0)
+    stopBtn.TextColor3 = Color3.new(1,1,1)
+    stopBtn.Parent = frame
+
+    playBtn.MouseButton1Down:Connect(function()
+        local id = tonumber(input.Text)
+        if id then
+            sound.SoundId = "rbxassetid://" .. id
+            sound:Play()
+        end
+    end)
+
+    stopBtn.MouseButton1Down:Connect(function()
+        sound:Stop()
+    end)
+end
+
+local audioBtn = AddButton(playerPage, "Audio Player", function()
+    createAudioUI()
+end)
+-- =========================
 -- FINAL TOUCHES
 -- =========================
 
