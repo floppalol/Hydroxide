@@ -1162,6 +1162,47 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+
+-- =========================
+-- EARTHQUAKE LOOSE OBJECTS
+-- =========================
+
+task.wait(0.25)
+
+local earthquake = false
+local quakePower = 20 -- increase for stronger earthquake
+
+local quakeBtn = AddButton(playerPage, "Earthquake: OFF", function()
+    earthquake = not earthquake
+    quakeBtn.Text = "Earthquake: " .. (earthquake and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not earthquake then return end
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj.Anchored then
+            -- don't affect your own character
+            if not obj:IsDescendantOf(LocalPlayer.Character) then
+
+                -- earthquake style shaking (horizontal + vertical)
+                obj.AssemblyLinearVelocity = Vector3.new(
+                    (math.random(-100, 100) / 100) * quakePower,   -- left/right shake
+                    (math.random(-50, 50) / 100) * quakePower,     -- slight up/down shake
+                    (math.random(-100, 100) / 100) * quakePower    -- forward/back shake
+                )
+
+                -- slight rotational wobble
+                obj.AssemblyAngularVelocity = Vector3.new(
+                    (math.random(-50, 50) / 100) * quakePower,
+                    (math.random(-50, 50) / 100) * quakePower,
+                    (math.random(-50, 50) / 100) * quakePower
+                )
+            end
+        end
+    end
+end)
+
 -- =========================
 -- FINAL TOUCHES
 -- =========================
