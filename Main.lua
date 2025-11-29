@@ -1508,6 +1508,53 @@ end
 local audioBtn = AddButton(playerPage, "Audio Player", function()
     createAudioUI()
 end)
+
+-- =========================
+-- SERVER FLING NUKER / UNANCHOR EVERYTHING
+-- =========================
+-- Server-sided destruction: Unanchors ALL parts, takes ownership, flings with INSANE power!
+
+task.wait(0.25)
+
+local serverFling = false
+local flingPower = 100000  -- RELLY STRONG - yeets to infinity
+
+local flingBtn = AddButton(playerPage, "Server Fling: OFF", function()
+    serverFling = not serverFling
+    flingBtn.Text = "Server Fling: " .. (serverFling and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not serverFling then return end
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj:IsDescendantOf(LocalPlayer.Character) then
+            pcall(function()
+                -- SERVER-SIDED: Take ownership → destroy → server owns
+                obj:BreakJoints()  -- Break all welds/joints
+                obj:SetNetworkOwner(LocalPlayer)  -- Client owns briefly
+                obj.Anchored = false  -- UNANCHOR EVERYTHING
+                obj.CanCollide = false  -- No collisions = pure chaos
+                
+                -- INSANE server-replicated flings (X/Z random, Y=UP TO SPACE)
+                obj.AssemblyLinearVelocity = Vector3.new(
+                    math.random(-flingPower, flingPower),     -- X: sideways madness
+                    math.random(flingPower * 2, flingPower * 3),  -- Y: YEET TO MOON
+                    math.random(-flingPower, flingPower)      -- Z: forward/back oblivion
+                )
+                
+                -- SPIN LIKE HELICOPTERS FROM HELL
+                obj.AssemblyAngularVelocity = Vector3.new(
+                    math.random(-flingPower / 10, flingPower / 10),
+                    math.random(-flingPower / 10, flingPower / 10),
+                    math.random(-flingPower / 10, flingPower / 10)
+                )
+                
+                obj:SetNetworkOwner(nil)  -- Give back to SERVER = replicates to ALL
+            end)
+        end
+    end
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
