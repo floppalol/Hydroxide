@@ -1202,7 +1202,42 @@ RunService.Heartbeat:Connect(function()
         end
     end
 end)
+-- =========================
+-- ZERO GRAVITY LOOSE OBJECTS
+-- =========================
 
+task.wait(0.25)
+
+local zeroGravity = false
+local floatPower = 4 -- upwards force strength (tweak if needed)
+
+local zeroBtn = AddButton(playerPage, "Zero Gravity: OFF", function()
+    zeroGravity = not zeroGravity
+    zeroBtn.Text = "Zero Gravity: " .. (zeroGravity and "ON" or "OFF")
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not zeroGravity then return end
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj.Anchored then
+
+            -- don't affect your own character parts
+            if not obj:IsDescendantOf(LocalPlayer.Character) then
+
+                -- cancel gravity + float up slightly
+                obj.AssemblyLinearVelocity = Vector3.new(
+                    0,
+                    floatPower, -- gentle upward force (removes gravity effect)
+                    0
+                )
+
+                -- remove rotation for clean drifting
+                obj.AssemblyAngularVelocity = Vector3.zero
+            end
+        end
+    end
+end)
 -- =========================
 -- FINAL TOUCHES
 -- =========================
